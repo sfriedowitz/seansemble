@@ -1,5 +1,5 @@
 [package]
-name = "toro"
+name = "loro"
 version = "0.1.0"
 edition = "2021"
 authors = [
@@ -8,7 +8,7 @@ authors = [
 license = "MIT"
 
 [lib]
-name = "toro"
+name = "loro"
 path = "src/lib.rs"
 
 [dependencies]

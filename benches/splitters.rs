@@ -1,7 +1,7 @@
 use criterion::{black_box, criterion_group, Criterion};
 use rand::prelude::{Rng, SeedableRng, StdRng};
 
-use toro::{
+use loro::{
     core::TrainingRow,
     trees::splits::{RegressionSplitter, Splitter},
 };

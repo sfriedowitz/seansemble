@@ -1,6 +1,6 @@
 #[macro_use]
 extern crate criterion;
-extern crate toro;
+extern crate loro;
 
 pub mod splitters;
 
