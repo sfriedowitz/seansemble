@@ -1,0 +1,30 @@
+[package]
+name = "toro"
+version = "0.1.0"
+edition = "2021"
+authors = [
+    "Sean Friedowitz"
+]
+license = "MIT"
+
+[lib]
+name = "toro"
+path = "src/lib.rs"
+
+[dependencies]
+rand = "0.8"
+itertools = "0.10"
+float-cmp = "0.9"
+approx = "0.5"
+num-traits = " 0.2.14"
+ndarray = "0.15"
+ndarray-rand = "0.14"
+ndarray-linalg = { version = "0.14", features = ["openblas-static"] }
+
+[dev-dependencies]
+criterion = "0.3"
+
+[[bench]]
+name = "toro_bench"
+harness = false
+path = "benches/lib.rs"
