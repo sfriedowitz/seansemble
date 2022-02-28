@@ -1,45 +1,28 @@
-use std::{error::Error, fmt};
+use std::borrow::Cow;
 
-#[derive(Clone, Copy, Debug)]
-pub enum FailureType {
-    Fit,
-    Predict,
-    Transform,
+use thiserror::Error as ThisError;
+
+type ErrString = Cow<'static, str>;
+pub type Result<T> = ::std::result::Result<T, ModelingError>;
+
+#[derive(Clone, Debug, ThisError)]
+#[non_exhaustive]
+pub enum ModelingError {
+    #[error("FitError: {0}")]
+    FitError(ErrString),
+    #[error("PredictError: {0}")]
+    PredictError(ErrString),
+    #[error("TransformError: {0}")]
+    TransformError(ErrString),
 }
 
-#[derive(Clone, Debug)]
-pub struct ModelingError {
-    pub err: FailureType,
-    pub msg: String,
-}
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-impl ModelingError {
-    pub fn from_fit<S: Into<String>>(msg: S) -> Self {
-        Self { err: FailureType::Fit, msg: msg.into() }
-    }
-
-    pub fn from_predict<S: Into<String>>(msg: S) -> Self {
-        Self { err: FailureType::Predict, msg: msg.into() }
-    }
-
-    pub fn from_transform<S: Into<String>>(msg: S) -> Self {
-        Self { err: FailureType::Transform, msg: msg.into() }
-    }
-
-    pub fn because<S: Into<String>>(err: FailureType, msg: S) -> Self {
-        Self { err, msg: msg.into() }
+    #[test]
+    fn test_error_state() {
+        let e = ModelingError::FitError("Not enough data to train model.".into());
+        println!("{}", e);
     }
 }
-
-impl fmt::Display for ModelingError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let prefix = match self.err {
-            FailureType::Fit => "Fitting Error",
-            FailureType::Predict => "Prediction Error",
-            FailureType::Transform => "Transform Error",
-        };
-        write!(f, "{}: {}", prefix, self.msg)
-    }
-}
-
-impl Error for ModelingError {}

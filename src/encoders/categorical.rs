@@ -20,12 +20,12 @@ impl<T: Hash + Eq + Clone> CategoricalEncoder<T> {
         CategoricalEncoder { encoding, decoding }
     }
 
-    /// Encode an input to a u32 value, returning 0 if the input is not present
+    /// Encode an input to a usize value, returning 0 if the input is not present.
     pub fn encode(&self, input: &T) -> usize {
         self.encoding.get(input).cloned().unwrap_or(0)
     }
 
-    /// Decode a u32 value to return the (optional) input it corresponds to
+    /// Decode a usize value to return the (optional) input it corresponds to.
     pub fn decode(&self, code: usize) -> Option<&T> {
         self.decoding.get(&code)
     }

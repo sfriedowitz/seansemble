@@ -20,11 +20,12 @@ num-traits = " 0.2.14"
 ndarray = "0.15"
 ndarray-rand = "0.14"
 ndarray-linalg = { version = "0.14", features = ["openblas-static"] }
+thiserror = "1.0.3"
 
 [dev-dependencies]
 criterion = "0.3"
 
 [[bench]]
-name = "toro_bench"
+name = "loro_bench"
 harness = false
 path = "benches/lib.rs"
