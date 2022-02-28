@@ -25,7 +25,7 @@ impl RegressionSplitter {
         Self { randomize_pivot, rng: new_rng }
     }
 
-    /// Find the best split on a continuous feature
+    /// Find the best split on a continuous feature.
     fn best_real_split(
         &mut self,
         data: &[TrainingRow<f64>],
@@ -65,7 +65,7 @@ impl RegressionSplitter {
         (Split::Real(idx, best_pivot), best_variance)
     }
 
-    /// Find the best split on a categorical variable
+    /// Find the best split on a categorical variable.
     fn best_categorical_split(
         &mut self,
         data: &[TrainingRow<f64>],
@@ -163,7 +163,7 @@ impl Splitter<f64> for RegressionSplitter {
         for index in indices.into_iter().take(nfeatures) {
             let (trial_split, trial_variance): (Split, f64) = match index {
                 idx if idx < nr => self.best_real_split(data, &mut calc, idx, min_count),
-                idx => self.best_categorical_split(data, &mut calc, idx, min_count),
+                idx => self.best_categorical_split(data, &mut calc, idx - nr, min_count),
             };
 
             if trial_variance < best_variance {

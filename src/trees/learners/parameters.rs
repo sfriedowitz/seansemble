@@ -1,10 +1,10 @@
-/// Hyperparameters for a decision tree learner
+/// Hyperparameters for a decision tree learner.
 #[derive(Debug, Copy, Clone)]
 pub struct DecisionTreeParameters {
     pub max_depth: usize,
     pub num_features: usize,
     pub min_leaf_instances: usize,
-    pub min_purity_increase: f64,
+    pub min_impurity_decrease: f64,
 }
 
 impl DecisionTreeParameters {
@@ -27,8 +27,8 @@ impl DecisionTreeParameters {
     }
 
     /// The minimum change in impurity for splitting an internal node.
-    pub fn with_min_purity_increase(mut self, min_purity_increase: f64) -> Self {
-        self.min_purity_increase = min_purity_increase;
+    pub fn with_min_impurity_decrease(mut self, min_impurity_decrease: f64) -> Self {
+        self.min_impurity_decrease = min_impurity_decrease;
         self
     }
 }
@@ -39,7 +39,7 @@ impl Default for DecisionTreeParameters {
             max_depth: 30,
             num_features: usize::MAX,
             min_leaf_instances: 2,
-            min_purity_increase: 0.0,
+            min_impurity_decrease: 0.0,
         }
     }
 }

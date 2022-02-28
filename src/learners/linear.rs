@@ -38,8 +38,8 @@ impl LinearRegressionLearner {
 
         match lhs.solve_into(rhs) {
             Ok(beta) => Ok(beta),
-            Err(_) => Err(ModelingError::fit(
-                "Failure while inverting linear operator in normal equations.",
+            Err(_) => Err(ModelingError::FitError(
+                "Failure while inverting linear operator in normal equations.".into(),
             )),
         }
     }

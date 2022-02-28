@@ -1,5 +1,5 @@
-pub mod linear;
-pub mod mean;
+mod classification;
+mod regression;
 
-pub use self::linear::*;
-pub use self::mean::*;
+pub use self::classification::ClassificationLeafLearner;
+pub use self::regression::RegressionLeafLearner;

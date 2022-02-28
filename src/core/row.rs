@@ -38,21 +38,21 @@ impl FeatureRow {
     }
 
     pub fn categorical_indices(&self) -> Range<usize> {
-        self.num_reals()..self.num_features()
+        0..self.num_categoricals()
     }
 
     pub fn real_at(&self, idx: usize) -> f64 {
         if !(self.real_indices().contains(&idx)) {
-            panic!("Invalid index `{}` for real feature.", idx);
+            panic!("Invalid index '{}' for real feature.", idx);
         };
         self.reals[idx]
     }
 
     pub fn categorical_at(&self, idx: usize) -> usize {
         if !(self.categorical_indices().contains(&idx)) {
-            panic!("Invalid index `{}` for categorical feature.", idx);
+            panic!("Invalid index '{}' for categorical feature.", idx);
         };
-        self.categoricals[idx - self.num_reals()]
+        self.categoricals[idx]
     }
 }
 
@@ -84,7 +84,7 @@ mod tests {
         let row = FeatureRow::new(reals, cats);
 
         assert!(row.real_at(2) == 3.0);
-        assert!(row.categorical_at(3) == 1);
+        assert!(row.categorical_at(2) == 3);
 
         // Suppress panic output below
         std::panic::set_hook(Box::new(|_| {}));
@@ -92,7 +92,7 @@ mod tests {
         let real_panic = std::panic::catch_unwind(|| row.real_at(3));
         assert!(real_panic.is_err());
 
-        let cat_panic = std::panic::catch_unwind(|| row.categorical_at(2));
+        let cat_panic = std::panic::catch_unwind(|| row.categorical_at(3));
         assert!(cat_panic.is_err());
     }
 }

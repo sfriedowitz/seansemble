@@ -43,8 +43,10 @@ impl<'a, L: Label> Iterator for PVAIterator<'a, L> {
         if self.index >= self.pva.len() {
             None
         } else {
+            let predicted = self.pva.predicted[self.index];
+            let actual = self.pva.actual[self.index];
             self.index += 1;
-            Some((self.pva.predicted[self.index], self.pva.actual[self.index]))
+            Some((predicted, actual))
         }
     }
 }

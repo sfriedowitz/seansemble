@@ -9,7 +9,7 @@ use super::{DecisionTreeParameters, LeafLearner, ModelNode, TrainingNode};
 #[derive(Debug)]
 pub struct RegressionTreeLearner {
     splitter: Box<dyn Splitter<f64>>,
-    learner: LeafLearner,
+    learner: RegressionLeafLearner,
     params: DecisionTreeParameters,
     rng: StdRng,
 }
