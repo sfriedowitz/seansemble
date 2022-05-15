@@ -1,5 +1,5 @@
 [package]
-name = "loro"
+name = "seansemble"
 version = "0.1.0"
 edition = "2021"
 authors = [
@@ -8,18 +8,16 @@ authors = [
 license = "MIT"
 
 [lib]
-name = "loro"
+name = "seansemble"
 path = "src/lib.rs"
 
 [dependencies]
 rand = "0.8"
+rand_distr="0.4"
 itertools = "0.10"
 float-cmp = "0.9"
-approx = "0.5"
-num-traits = " 0.2.14"
-ndarray = "0.15"
-ndarray-rand = "0.14"
-ndarray-linalg = { version = "0.14", features = ["openblas-static"] }
+num = "^0.4"
+nalgebra = "0.31"
 thiserror = "1.0.3"
 
 [dev-dependencies]

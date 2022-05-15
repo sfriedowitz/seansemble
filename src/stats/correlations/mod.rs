@@ -1,8 +1,8 @@
-use ndarray::{Array1, Array2};
+use nalgebra::{DMatrix, DVector};
 
-pub fn distance_matrix<T>(x: &[T], y: &[T], distance: fn(&T, &T) -> f64) -> Array2<f64> {
+pub fn distance_matrix<T>(x: &[T], y: &[T], distance: fn(&T, &T) -> f64) -> DMatrix<f64> {
     let n = x.len();
-    let mut result = Array2::zeros((n, n));
+    let mut result = DMatrix::<f64>::zeros(n, n);
     for i in 0..n {
         for j in i..n {
             let d = distance(&x[i], &y[j]);

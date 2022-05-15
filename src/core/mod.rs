@@ -1,9 +1,8 @@
 mod api;
+mod data;
 mod error;
-mod row;
-mod types;
+mod values;
 
-pub use self::api::{Learner, Model, Prediction};
+pub use self::data::TrainingRow;
 pub use self::error::ModelingError;
-pub use self::row::{FeatureRow, TrainingRow};
-pub use self::types::Label;
+pub use self::values::{AnyValue, Label};
