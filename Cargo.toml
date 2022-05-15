@@ -24,6 +24,6 @@ thiserror = "1.0.3"
 criterion = "0.3"
 
 [[bench]]
-name = "loro_bench"
+name = "seansemble-bench"
 harness = false
 path = "benches/lib.rs"

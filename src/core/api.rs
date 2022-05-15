@@ -1,25 +1,25 @@
-use std::fmt::Debug;
+use std::{any::Any, fmt::Debug};
 
-use super::{ModelingError, TrainingRow};
+use super::{AnyValue, Result, TrainingRow};
 
-pub trait Learner<D, P> {
-    fn fit(training_data: &D, parameters: &P) -> Result<Self, ModelingError>
+pub trait Learner<T> {
+    fn fit(&self, training_data: &[TrainingRow<T>]) -> Result<Box<dyn Model<T>>>
     where
         Self: Sized;
 }
 
-// pub trait Model<L: Label>: Debug {
-//     fn transform(&self, inputs: &[FeatureRow]) -> Box<dyn Prediction<L>>;
+pub trait Model<T>: Debug {
+    fn transform(&self, inputs: &[Vec<AnyValue>]) -> Result<Box<dyn Prediction<T>>>;
 
-//     fn loss(&self) -> Option<f64> {
-//         None
-//     }
-// }
+    fn loss(&self) -> Option<f64> {
+        None
+    }
+}
 
-// pub trait Prediction<L: Label>: Debug {
-//     fn expected(&self) -> Vec<L>;
+pub trait Prediction<T>: Debug {
+    fn expected(&self) -> Vec<T>;
 
-//     fn uncertainty(&self, observational: bool) -> Option<Vec<L>> {
-//         None
-//     }
-// }
+    fn uncertainty(&self) -> Option<Vec<T>> {
+        None
+    }
+}

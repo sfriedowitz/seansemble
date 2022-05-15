@@ -1,13 +1,13 @@
 use std::borrow::Cow;
 
-use thiserror::Error as ThisError;
+use thiserror::Error;
 
 pub type Result<T> = ::std::result::Result<T, ModelingError>;
 
 type ErrString = Cow<'static, str>;
 
-#[derive(Clone, Debug, ThisError)]
 #[non_exhaustive]
+#[derive(Clone, Debug, Error)]
 pub enum ModelingError {
     #[error("FitError: {0}")]
     FitError(ErrString),
@@ -15,4 +15,8 @@ pub enum ModelingError {
     PredictError(ErrString),
     #[error("TransformError: {0}")]
     TransformError(ErrString),
+    #[error("SolutionError: {0}")]
+    SolutionError(ErrString),
+    #[error("GenericError: {0}")]
+    Generic(ErrString),
 }

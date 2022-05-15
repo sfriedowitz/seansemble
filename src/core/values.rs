@@ -1,30 +1,6 @@
-use std::{
-    fmt::Debug,
-    ops::{Add, AddAssign, Mul, Sub},
-};
+use std::fmt::Debug;
 
-use num::{Bounded, FromPrimitive, Num, NumCast, Zero};
-
-pub trait Label:
-    Copy
-    + Num
-    + NumCast
-    + Zero
-    + std::iter::Sum<Self>
-    + Add<Output = Self>
-    + Sub<Output = Self>
-    + Mul<Output = Self>
-    + PartialOrd
-    + AddAssign
-    + Bounded
-    + FromPrimitive
-{
-}
-
-impl Label for f64 {}
-impl Label for usize {}
-
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub enum AnyValue {
     Null,
     Real(f64),
@@ -32,35 +8,43 @@ pub enum AnyValue {
 }
 
 impl AnyValue {
-    pub fn is_real(&self) -> bool {
-        use AnyValue::*;
-        match self {
-            Real(_) => true,
-            _ => false,
-        }
-    }
-
-    pub fn is_categorcial(&self) -> bool {
-        use AnyValue::*;
-        match self {
-            Categorical(_) => true,
-            _ => false,
-        }
-    }
-
     pub fn as_real(&self) -> Option<f64> {
-        use AnyValue::*;
-        match self {
-            Real(x) => Some(*x),
-            _ => None,
+        if let AnyValue::Real(x) = self {
+            Some(*x)
+        } else {
+            None
         }
     }
 
     pub fn as_categorical(&self) -> Option<usize> {
-        use AnyValue::*;
-        match self {
-            Categorical(x) => Some(*x),
-            _ => None,
+        if let AnyValue::Categorical(x) = self {
+            Some(*x)
+        } else {
+            None
+        }
+    }
+
+    pub fn is_real(&self) -> bool {
+        if let AnyValue::Real(_) = self {
+            true
+        } else {
+            false
+        }
+    }
+
+    pub fn is_categorcial(&self) -> bool {
+        if let AnyValue::Categorical(_) = self {
+            true
+        } else {
+            false
+        }
+    }
+
+    pub fn is_null(&self) -> bool {
+        if let AnyValue::Null = self {
+            true
+        } else {
+            false
         }
     }
 }

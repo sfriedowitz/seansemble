@@ -1,8 +1,8 @@
 mod api;
-mod data;
 mod error;
+mod row;
 mod values;
 
-pub use self::data::TrainingRow;
-pub use self::error::ModelingError;
-pub use self::values::{AnyValue, Label};
+pub use self::error::{ModelingError, Result};
+pub use self::row::TrainingRow;
+pub use self::values::AnyValue;
