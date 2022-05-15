@@ -1,6 +1,6 @@
-use std::{any::Any, fmt::Debug};
+use std::fmt::Debug;
 
-use super::{AnyValue, Result, TrainingRow};
+use super::{row::FeatureRow, Result, TrainingRow};
 
 pub trait Learner<T> {
     fn fit(&self, training_data: &[TrainingRow<T>]) -> Result<Box<dyn Model<T>>>
@@ -9,7 +9,7 @@ pub trait Learner<T> {
 }
 
 pub trait Model<T>: Debug {
-    fn transform(&self, inputs: &[Vec<AnyValue>]) -> Result<Box<dyn Prediction<T>>>;
+    fn transform(&self, inputs: &[FeatureRow]) -> Result<Box<dyn Prediction<T>>>;
 
     fn loss(&self) -> Option<f64> {
         None
