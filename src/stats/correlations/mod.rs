@@ -13,17 +13,13 @@ pub fn distance_matrix<T>(x: &[T], y: &[T], distance: fn(&T, &T) -> f64) -> DMat
     result
 }
 
-pub fn centered_distance<T>(x: &[T], distance: fn(&T, &T) -> f64) -> Array2<f64> {
+pub fn centered_distance<T>(x: &[T], distance: fn(&T, &T) -> f64) -> DMatrix<f64> {
     let n = x.len();
     let pair_distances = distance_matrix(x, x, distance);
 
     let grand_mean = pair_distances.sum() / ((n * n) as f64);
-    let row_means: Array1<f64> =
-        pair_distances.rows().into_iter().map(|row| row.sum() / (n as f64)).collect();
-
-    Array2::from_shape_fn((n, n), |(i, j)| {
-        pair_distances[(i, j)] - row_means[i] - row_means[j] + grand_mean
-    })
+    let row_means = DVector::from_fn(n, |i, _| pair_distances.row(i).sum() / (n as f64));
+    DMatrix::from_fn(n, n, |i, j| pair_distances[(i, j)] - row_means[i] - row_means[j] + grand_mean)
 }
 
 pub fn distance_covariance<T>(x: &[T], y: &[T], distance: fn(&T, &T) -> f64) -> f64 {
@@ -38,8 +34,13 @@ pub fn distance_correlation<T>(x: &[T], y: &[T], distance: fn(&T, &T) -> f64) ->
     let cov = distance_covariance(x, y, distance);
     let varx = distance_covariance(x, x, distance);
     let vary = distance_covariance(y, y, distance);
+    let varxy = (varx * vary).sqrt();
 
-    cov / (varx * vary).sqrt()
+    if cov == 0.0 && varxy == 0.0 {
+        0.0
+    } else {
+        cov / varxy
+    }
 }
 
 #[cfg(test)]
@@ -48,9 +49,9 @@ mod tests {
 
     #[test]
     fn test_distance_matrix() {
-        let x = Vec::from_iter((0..3).map(|i| i as f64));
+        let x = Vec::from_iter((0..5).map(|i| i as f64));
 
         let dists = distance_matrix(&x, &x, |x, y| (x - y).abs());
-        println!("{}", dists);
+        dists.diagonal().iter().for_each(|x| assert_eq!(*x, 0.0));
     }
 }

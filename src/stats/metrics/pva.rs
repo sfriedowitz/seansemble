@@ -1,16 +1,14 @@
 use std::fmt::Debug;
 
-use crate::core::Label;
-
 /// The predicted vs. actual response values
 #[derive(Clone, Debug)]
-pub struct PVA<L: Label> {
-    pub predicted: Vec<L>,
-    pub actual: Vec<L>,
+pub struct PVA<T> {
+    pub predicted: Vec<T>,
+    pub actual: Vec<T>,
 }
 
-impl<L: Label> PVA<L> {
-    pub fn new(predicted: Vec<L>, actual: Vec<L>) -> Self {
+impl<T> PVA<T> {
+    pub fn new(predicted: Vec<T>, actual: Vec<T>) -> Self {
         if predicted.len() != actual.len() {
             panic!("The vector sizes don't match: {} != {}", predicted.len(), actual.len(),)
         }
@@ -25,35 +23,35 @@ impl<L: Label> PVA<L> {
         self.len() == 0
     }
 
-    pub fn iter(&'_ self) -> PVAIterator<'_, L> {
+    pub fn iter(&'_ self) -> PVAIterator<'_, T> {
         PVAIterator { pva: self, index: 0 }
     }
 }
 
 /// An iterator over (pred, actual) values in a PVA container
-pub struct PVAIterator<'a, L: Label> {
-    pva: &'a PVA<L>,
+pub struct PVAIterator<'a, T> {
+    pva: &'a PVA<T>,
     index: usize,
 }
 
-impl<'a, L: Label> Iterator for PVAIterator<'a, L> {
-    type Item = (L, L);
+impl<'a, T> Iterator for PVAIterator<'a, T> {
+    type Item = (&'a T, &'a T);
 
     fn next(&mut self) -> Option<Self::Item> {
         if self.index >= self.pva.len() {
             None
         } else {
-            let predicted = self.pva.predicted[self.index];
-            let actual = self.pva.actual[self.index];
+            let predicted = &self.pva.predicted[self.index];
+            let actual = &self.pva.actual[self.index];
             self.index += 1;
             Some((predicted, actual))
         }
     }
 }
 
-impl<'a, L: Label> IntoIterator for &'a PVA<L> {
-    type Item = (L, L);
-    type IntoIter = PVAIterator<'a, L>;
+impl<'a, T> IntoIterator for &'a PVA<T> {
+    type Item = (&'a T, &'a T);
+    type IntoIter = PVAIterator<'a, T>;
 
     fn into_iter(self) -> Self::IntoIter {
         PVAIterator { pva: self, index: 0 }

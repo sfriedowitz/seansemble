@@ -9,7 +9,7 @@ pub enum ClassificationMetric {
 }
 
 impl ClassificationMetric {
-    pub fn get_score(&self, pva: &PVA<usize>) -> f64 {
+    pub fn calculate(&self, pva: &PVA<usize>) -> f64 {
         match self {
             Self::Accuracy => Self::calculate_accuracy(pva),
             Self::Precision => Self::calculate_precision(pva),
@@ -30,7 +30,7 @@ impl ClassificationMetric {
 
     fn calculate_precision(pva: &PVA<usize>) -> f64 {
         let confusion = confusion_matrix(pva);
-        let predicted_counts: Vec<usize> = confusion.rows().into_iter().map(|r| r.sum()).collect();
+        let predicted_counts: Vec<usize> = confusion.row_iter().map(|r| r.sum()).collect();
 
         let total: f64 = predicted_counts
             .iter()
@@ -51,7 +51,7 @@ impl ClassificationMetric {
 
     fn calculate_recall(pva: &PVA<usize>) -> f64 {
         let confusion = confusion_matrix(pva);
-        let actual_counts: Vec<usize> = confusion.columns().into_iter().map(|c| c.sum()).collect();
+        let actual_counts: Vec<usize> = confusion.column_iter().map(|c| c.sum()).collect();
 
         let total: f64 = actual_counts
             .iter()

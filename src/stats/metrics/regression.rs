@@ -8,7 +8,7 @@ pub enum RegressionMetric {
 }
 
 impl RegressionMetric {
-    pub fn get_score(&self, pva: &PVA<f64>) -> f64 {
+    pub fn calculate(&self, pva: &PVA<f64>) -> f64 {
         match self {
             Self::MSE => Self::calculate_error(pva, |x| x.powf(2.0)),
             Self::MAE => Self::calculate_error(pva, |x| x.abs()),

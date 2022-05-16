@@ -1,11 +1,11 @@
 use std::collections::HashMap;
 
 use itertools::Itertools;
-use ndarray::Array2;
+use nalgebra::DMatrix;
 
 use super::PVA;
 
-pub fn confusion_matrix(pva: &PVA<usize>) -> Array2<usize> {
+pub fn confusion_matrix(pva: &PVA<usize>) -> DMatrix<usize> {
     // Get all unique labels
     let labels: Vec<usize> =
         pva.predicted.iter().chain(pva.actual.iter()).unique().copied().collect();
@@ -16,7 +16,7 @@ pub fn confusion_matrix(pva: &PVA<usize>) -> Array2<usize> {
     // Increment matrix elements for each pair in PVA
     // Sum down rows per column -> actual count
     // Sum across columns per row -> predicted count
-    let mut confusion = Array2::zeros((n, n));
+    let mut confusion = DMatrix::zeros(n, n);
     for (pred, actual) in pva {
         let i = index[&pred];
         let j = index[&actual];
@@ -38,11 +38,11 @@ mod tests {
         let pva_equal = PVA::new(y1.clone(), y1.clone());
         let confusion_equal = confusion_matrix(&pva_equal);
         assert!(confusion_equal.nrows() == 4); // Only 4 labels from [0..3]
-        assert!(confusion_equal.diag().sum() == y1.len()); // Only diagonal elements present
+        assert!(confusion_equal.diagonal().sum() == y1.len()); // Only diagonal elements present
 
         let pva_diff = PVA::new(y1.clone(), y2.clone());
         let confusion_diff = confusion_matrix(&pva_diff);
         assert!(confusion_diff.nrows() == 5); // Now 5 labels from [0..4]
-        assert!(confusion_diff.diag().sum() < y1.len()); // Off diagonals -> lesser diagonal sum
+        assert!(confusion_diff.diagonal().sum() < y1.len()); // Off diagonals -> lesser diagonal sum
     }
 }
