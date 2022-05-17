@@ -1,3 +1,8 @@
+use std::{
+    any::Any,
+    ops::{Index, IndexMut},
+};
+
 use super::AnyValue;
 
 #[derive(Clone, Debug)]
@@ -32,6 +37,20 @@ impl FeatureRow {
 impl From<Vec<AnyValue>> for FeatureRow {
     fn from(data: Vec<AnyValue>) -> Self {
         FeatureRow::new(data)
+    }
+}
+
+impl Index<usize> for FeatureRow {
+    type Output = AnyValue;
+
+    fn index(&self, index: usize) -> &Self::Output {
+        &self.data[index]
+    }
+}
+
+impl IndexMut<usize> for FeatureRow {
+    fn index_mut(&mut self, index: usize) -> &mut Self::Output {
+        &mut self.data[index]
     }
 }
 

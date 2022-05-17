@@ -22,8 +22,8 @@ pub fn confusion_matrix(pva: &PVA<usize>) -> DMatrix<usize> {
     // Sum across columns per row -> predicted count
     let mut confusion = DMatrix::zeros(n, n);
     for (pred, actual) in pva {
-        let i = index[&pred];
-        let j = index[&actual];
+        let i = index[pred];
+        let j = index[actual];
         confusion[(i, j)] += 1;
     }
     confusion

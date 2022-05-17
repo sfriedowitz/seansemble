@@ -2,7 +2,6 @@ use std::fmt::Debug;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum AnyValue {
-    Null,
     Real(f64),
     Categorical(usize),
 }
@@ -25,27 +24,11 @@ impl AnyValue {
     }
 
     pub fn is_real(&self) -> bool {
-        if let AnyValue::Real(_) = self {
-            true
-        } else {
-            false
-        }
+        matches!(self, AnyValue::Real(_))
     }
 
     pub fn is_categorcial(&self) -> bool {
-        if let AnyValue::Categorical(_) = self {
-            true
-        } else {
-            false
-        }
-    }
-
-    pub fn is_null(&self) -> bool {
-        if let AnyValue::Null = self {
-            true
-        } else {
-            false
-        }
+        matches!(self, AnyValue::Categorical(_))
     }
 }
 

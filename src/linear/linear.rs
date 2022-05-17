@@ -1,27 +1,28 @@
-use ndarray::{arr1, concatenate, s, Array, Array1, Array2, Axis};
-use ndarray_linalg::Solve;
+use itertools::{Itertools, MinMaxResult};
+use nalgebra::{DMatrix, DVector};
+use rand::Rng;
 
-use crate::core::{FeatureRow, Learner, Model, ModelingError, Prediction, TrainingRow};
+use crate::core::{FeatureRow, Learner, Model, ModelingError, Prediction, Result, TrainingRow};
 
 #[derive(Clone, Copy, Debug)]
 pub struct LinearRegressionLearner {
-    fit_intercept: bool,
+    intercept: bool,
     alpha: f64,
 }
 
 impl LinearRegressionLearner {
-    pub fn new(fit_intercept: bool, alpha: Option<f64>) -> Self {
-        LinearRegressionLearner { fit_intercept, alpha: alpha.unwrap_or(0.0).max(0.0) }
+    pub fn new(intercept: bool, alpha: Option<f64>) -> Self {
+        LinearRegressionLearner { intercept, alpha: alpha.unwrap_or(0.0).max(0.0) }
     }
 
     fn solve_normal_equation(
         &self,
-        X: &Array2<f64>,
-        y: &Array1<f64>,
-        w: &Array1<f64>,
-    ) -> Result<Array1<f64>, ModelingError> {
+        X: &DMatrix<f64>,
+        y: &DVector<f64>,
+        w: &DVector<f64>,
+    ) -> Result<DVector<f64>> {
         // Multiply by weight matrix by scaling X columns (after transpose)
-        let mut Xw = X.t().to_owned();
+        let mut Xw = X.transpose().to_owned();
         for (i, mut col) in Xw.columns_mut().into_iter().enumerate() {
             col *= w[i];
         }
@@ -46,22 +47,28 @@ impl LinearRegressionLearner {
 }
 
 impl Learner<f64> for LinearRegressionLearner {
-    fn fit(&mut self, data: &[TrainingRow<f64>]) -> Box<dyn Model<f64>> {
-        // Get indices that are (1) non-constant and (2) non-NaN
-        let indices: Vec<usize> = data[0]
+    fn fit(&self, data: &[TrainingRow<f64>], rng: &mut impl Rng) -> Result<Box<dyn Model<f64>>> {
+        // Get real indices that are (1) non-constant and (2) non-NaN
+        let included_features: Vec<usize> = data[0]
             .features
             .real_indices()
             .filter(|&idx| {
-                let has_nans = data.iter().any(|row| row.features.real_at(idx).is_nan());
-                let mut is_constant = true;
-                let head_value = data[0].features.real_at(idx);
-                for row in data {
-                    if row.features.real_at(idx) != head_value {
-                        is_constant = false;
-                        break;
-                    }
-                }
-                !has_nans && !is_constant
+                let feature_values: Vec<f64> = data
+                    .iter()
+                    .map(|row| row.features[idx].as_real().unwrap_or(f64::NAN))
+                    .collect();
+
+                let finite_values =
+                    feature_values.iter().filter(|x| x.is_finite()).copied().collect();
+                let non_finite = finite_values.len() != feature_values.len();
+
+                let is_constant = match finite_values.iter().minmax() {
+                    MinMaxResult::NoElements => true,
+                    MinMaxResult::OneElement(_) => true,
+                    MinMaxResult::MinMax(x, y) => x != y,
+                };
+
+                !(non_finite || is_constant)
             })
             .collect();
 
@@ -91,7 +98,7 @@ impl Learner<f64> for LinearRegressionLearner {
         let wvec = arr1(&w_data);
 
         let Xmat = Array2::from_shape_vec((ns, nf), x_data).expect("X has correct dimensions");
-        let Xmat = match self.fit_intercept {
+        let Xmat = match self.intercept {
             true => {
                 let intercept_col: Array<f64, _> = Array::ones((ns, 1));
                 concatenate![Axis(1), intercept_col, Xmat]
